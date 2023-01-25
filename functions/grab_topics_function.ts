@@ -63,11 +63,10 @@ ${index + 1}. ${msg.text.split("\n&gt; ")[1]}`;
     //   ts: "1674651917.270719",
     // });
     // const messages2 = await client.conversations.list();
-    console.dir({ suggestions }, { depth: 5 });
     const response = await client.chat.postMessage({
       channel: channelId,
       text: `
-      Topics for Tuesday
+      *Topics for Tuesday*
       ${suggestions}
       `,
     });
