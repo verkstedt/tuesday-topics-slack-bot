@@ -1,13 +1,13 @@
 import { Trigger } from "deno-slack-api/types.ts";
 import { TriggerTypes } from "deno-slack-api/typed-method-types/workflows/triggers/mod.ts";
 
-const grabTopicsSelectionTrigger: Trigger = {
+const findWinnerTrigger: Trigger = {
   name: "Grab Topics",
   type: TriggerTypes.Scheduled,
-  workflow: "#/workflows/grab_topics_workflow", // Replace with custom function
+  workflow: "#/workflows/find_winner_workflow", // Replace with custom function
   inputs: {},
   schedule: {
-    start_time: "2023-01-25T14:56:30Z",
+    start_time: "2023-01-25T14:59:30Z",
     timezone: "UTC",
     // frequency: {
     //   type: "weekly",
@@ -17,4 +17,4 @@ const grabTopicsSelectionTrigger: Trigger = {
   },
 };
 
-export default grabTopicsSelectionTrigger;
+export default findWinnerTrigger;
