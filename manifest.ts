@@ -1,5 +1,6 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
 import GreetingWorkflow from "./workflows/greeting_workflow.ts";
+import GrabTopicsWorkflow from "./workflows/grab_topics_workflow.ts";
 
 /**
  * The app manifest contains the app's configuration. This
@@ -11,7 +12,7 @@ export default Manifest({
   description:
     "A sample that demonstrates using a function, workflow and trigger to send a greeting",
   icon: "assets/default_new_app_icon.png",
-  workflows: [GreetingWorkflow],
+  workflows: [GreetingWorkflow, GrabTopicsWorkflow],
   outgoingDomains: [],
   botScopes: ["commands", "chat:write", "chat:write.public"],
 });

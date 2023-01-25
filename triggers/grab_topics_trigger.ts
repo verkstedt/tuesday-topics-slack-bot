@@ -5,7 +5,7 @@ const grabTopicsSelectionTrigger: Trigger = {
   type: "scheduled",
   workflow: "#/workflows/grab_topics_workflow", // Replace with custom function
   schedule: {
-    start_time: "2023-01-25T11:00:00Z",
+    start_time: "2023-01-25T13:16:30Z",
     timezone: "CET",
     frequency: {
       type: "weekly",

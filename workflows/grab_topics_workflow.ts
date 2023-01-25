@@ -1,5 +1,7 @@
 import { Schema } from "deno-slack-sdk/mod.ts";
 import { DefineWorkflow } from "deno-slack-sdk/mod.ts";
+import { GrabTopicsFunctionDefinition } from "../functions/grab_topics_function.ts";
+
 const GrabTopicsWorkflow = DefineWorkflow({
   callback_id: "grab_topics_workflow",
   title: "Grab the topics",
@@ -13,8 +15,26 @@ const GrabTopicsWorkflow = DefineWorkflow({
         type: Schema.slack.types.channel_id,
       },
     },
-    required: ["interactivity"],
+    required: [],
   },
 });
+// GreetingWorkflow.addStep(Schema.slack.functions.SendMessage, {
+//   channel_id: inputForm.outputs.fields.channel,
+//   message: greetingFunctionStep.outputs.greeting,
+// });
 
-GrabTopicsWorkflow.addStep();
+GrabTopicsWorkflow.addStep(
+  GrabTopicsFunctionDefinition,
+  {
+    channelId: "GQQJ2QD45",
+  },
+);
+
+// GrabTopicsWorkflow.addStep(Schema.slack.functions.SendMessage, {
+//   channel_id: "GQQJ2QD45",
+//   message: "our message",
+// });
+
+// GrabTopicsWorkflow.addStep(GrabTopicsFunctionDefinition);
+
+export default GrabTopicsWorkflow;
