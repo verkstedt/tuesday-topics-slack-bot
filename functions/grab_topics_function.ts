@@ -47,10 +47,29 @@ export default SlackFunction(
     //   salutations[Math.floor(Math.random() * salutations.length)];
     // const greeting =
     //   `${salutation}, <@${recipient}>! :wave: Someone sent the following greeting: \n\n>${message}`;
+    const history = await client.conversations.history({
+      channel: channelId,
+    });
 
+    const suggestions = history.messages?.filter((message) => {
+      return message?.bot_id === "B04L8JDM2RH";
+    }).reduce((list, msg, index) => {
+      return `${list}
+${index + 1}. ${msg.text.split("\n&gt; ")[1]}`;
+    }, "");
+
+    // const replies = await client.conversations.replies({
+    //   channel: channelId,
+    //   ts: "1674651917.270719",
+    // });
+    // const messages2 = await client.conversations.list();
+    console.dir({ suggestions }, { depth: 5 });
     const response = await client.chat.postMessage({
       channel: channelId,
-      text: "Hello World",
+      text: `
+      Topics for Tuesday
+      ${suggestions}
+      `,
     });
 
     //     const message = `

@@ -26,7 +26,7 @@ const GrabTopicsWorkflow = DefineWorkflow({
 GrabTopicsWorkflow.addStep(
   GrabTopicsFunctionDefinition,
   {
-    channelId: "GQQJ2QD45",
+    channelId: "C04LTRX19MF",
   },
 );
 
