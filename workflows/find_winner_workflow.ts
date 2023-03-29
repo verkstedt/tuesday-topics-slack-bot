@@ -23,7 +23,7 @@ const FindWinnerWorkflow = DefineWorkflow({
 FindWinnerWorkflow.addStep(
   FindWinnerFunctionDefinition,
   {
-    channelId: "C04LTRX19MF",
+    channelId: "C0516JP35SM",
   },
 );
 

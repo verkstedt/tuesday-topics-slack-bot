@@ -36,6 +36,7 @@ export default SlackFunction(
   FindWinnerFunctionDefinition,
   // @ts-ignore
   async ({ inputs, client }) => {
+    const suggestTopicId = "B04L8JDM2RH";
     const { channelId } = inputs;
 
     const history = await client.conversations.history({
@@ -62,7 +63,7 @@ export default SlackFunction(
     )[1]
       .split("\n").filter((str) => Boolean(str.trim()));
 
-    console.log({ pollSuggestions, pollMessageReplies });
+    // console.log({ pollSuggestions, pollMessageReplies });
 
     const votes = pollMessageReplies.messages.filter((reply) => !reply?.bot_id)
       .reduce((results, value) => {
@@ -74,12 +75,12 @@ export default SlackFunction(
 
         return results;
       }, {});
-    console.log({ votes });
+    // console.log({ votes });
     const winnerIndex = Object.keys(votes).reduce((a, b) =>
       votes[a] > votes[b] ? a : b
     );
 
-    console.log({ winnerIndex });
+    // console.log({ winnerIndex });
 
     const winner = pollSuggestions.find((suggestion) =>
       suggestion.includes(`#${winnerIndex}`)
@@ -94,7 +95,7 @@ export default SlackFunction(
     });
 
     const suggestions = history.messages?.filter((message) => {
-      return message?.bot_id === "B04L8JDM2RH";
+      return message?.bot_id === suggestTopicId;
     });
 
     // {
@@ -111,15 +112,14 @@ export default SlackFunction(
 
     const winningSuggestion = suggestions.find(({ text }) => {
       const matches = winner.match(/#\d+ (.*)/);
-      console.log({ winner, text, matches });
+      // console.log({ winner, text, matches });
       return text.includes(`added a topic:\n&gt; ${matches[1]}`);
     });
-    console.log({ winningSuggestion });
-    client.chat.delete({
-      token: "3e6397de46d92d3555eba4e9f486726b",
-      ts: winningSuggestion.ts,
-      channel: channelId,
-    });
+    // client.chat.delete({
+    //   token: "3e6397de46d92d3555eba4e9f486726b",
+    //   ts: winningSuggestion.ts,
+    //   channel: channelId,
+    // });
 
     //     const message = `
     // 1. Your fav option 1

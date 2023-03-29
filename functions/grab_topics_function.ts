@@ -46,13 +46,15 @@ export default SlackFunction(
     // const salutation =
     //   salutations[Math.floor(Math.random() * salutations.length)];
     // const greeting =
-    //   `${salutation}, <@${recipient}>! :wave: Someone sent the following greeting: \n\n>${message}`;
+    //   `${sal(utation}, <@${recipient}>! :wave: Someone sent the following greeting: \n\n>${message}`;
     const history = await client.conversations.history({
       channel: channelId,
     });
 
+    // console.log({ history });
+
     const suggestions = history.messages?.filter((message) => {
-      return message?.bot_id === "B04L8JDM2RH";
+      return message?.bot_id === "B04L8JDM2RH"; // This should be the ID of the "suggestion workflow"
     }).reduce((list, msg, index) => {
       return `${list}
 #${index + 1} ${msg.text.split("\n&gt; ")[1]}`;
