@@ -7,7 +7,7 @@ const findWinnerTrigger: Trigger = {
   workflow: "#/workflows/find_winner_workflow", // Replace with custom function
   inputs: {},
   schedule: {
-    start_time: "2023-03-29T12:13:00Z",
+    start_time: "2023-03-29T13:11:20",
     timezone: "UTC",
     // frequency: {
     //   type: "weekly",

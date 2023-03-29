@@ -65,7 +65,8 @@ export default SlackFunction(
 
     // console.log({ pollSuggestions, pollMessageReplies });
 
-    const votes = pollMessageReplies.messages.filter((reply) => !reply?.bot_id)
+    const votes = pollMessageReplies.messages
+      .filter((message) => !message?.bot_id)
       .reduce((results, value) => {
         if (!results[value.text]) {
           results[value.text] = 1;
@@ -75,51 +76,60 @@ export default SlackFunction(
 
         return results;
       }, {});
-    // console.log({ votes });
-    const winnerIndex = Object.keys(votes).reduce((a, b) =>
-      votes[a] > votes[b] ? a : b
-    );
+    const voteKeys = Object.keys(votes);
+    console.log({ votes, voteKeys });
+    let response;
+    if (voteKeys.length) {
+      const winnerIndex = voteKeys.reduce((a, b) =>
+        votes[a] > votes[b] ? a : b
+      );
 
-    // console.log({ winnerIndex });
+      // console.log({ winnerIndex });
 
-    const winner = pollSuggestions.find((suggestion) =>
-      suggestion.includes(`#${winnerIndex}`)
-    );
+      const winner = pollSuggestions.find((suggestion) =>
+        suggestion.includes(`#${winnerIndex}`)
+      );
 
-    const response = await client.chat.postMessage({
-      channel: channelId,
-      text: `
+      response = await client.chat.postMessage({
+        channel: channelId,
+        text: `
       *The winner is...*
       ${winner}
       `,
-    });
+      });
 
-    const suggestions = history.messages?.filter((message) => {
-      return message?.bot_id === suggestTopicId;
-    });
+      const suggestions = history.messages?.filter((message) => {
+        return message?.bot_id === suggestTopicId;
+      });
 
-    // {
-    //   type: "message",
-    //   subtype: "bot_message",
-    //   text: "Vedran Josipovic added a topic:\n&gt; _Hakans topic_",
-    //   ts: "1674642474.485009",
-    //   username: "Add Tuesday topic",
-    //   bot_id: "B04L8JDM2RH",
-    //   app_id: "A04KU612K9V",
-    //   blocks: [ [Object] ],
-    //   edited: { user: "B04L8JDM2RH", ts: "1674652657.000000" }
-    // },
+      // {
+      //   type: "message",
+      //   subtype: "bot_message",
+      //   text: "Vedran Josipovic added a topic:\n&gt; _Hakans topic_",
+      //   ts: "1674642474.485009",
+      //   username: "Add Tuesday topic",
+      //   bot_id: "B04L8JDM2RH",
+      //   app_id: "A04KU612K9V",
+      //   blocks: [ [Object] ],
+      //   edited: { user: "B04L8JDM2RH", ts: "1674652657.000000" }
+      // },
 
-    const winningSuggestion = suggestions.find(({ text }) => {
-      const matches = winner.match(/#\d+ (.*)/);
-      // console.log({ winner, text, matches });
-      return text.includes(`added a topic:\n&gt; ${matches[1]}`);
-    });
-    // client.chat.delete({
-    //   token: "3e6397de46d92d3555eba4e9f486726b",
-    //   ts: winningSuggestion.ts,
-    //   channel: channelId,
-    // });
+      const winningSuggestion = suggestions.find(({ text }) => {
+        const matches = winner.match(/#\d+ (.*)/);
+        console.log({ winner, text, matches });
+        return text.includes(`added a topic:\n&gt; ${matches[1]}`);
+      });
+      console.log({ winningSuggestion });
+      client.chat.delete({
+        ts: winningSuggestion.ts,
+        channel: channelId,
+      });
+    } else {
+      response = await client.chat.postMessage({
+        channel: channelId,
+        text: `No votes`,
+      });
+    }
 
     //     const message = `
     // 1. Your fav option 1
