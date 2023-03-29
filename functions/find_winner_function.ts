@@ -115,11 +115,11 @@ export default SlackFunction(
       return text.includes(`added a topic:\n&gt; ${matches[1]}`);
     });
     console.log({ winningSuggestion });
-    // client.chat.delete({
-    //   token:
-    //   ts: winningSuggestion.ts,
-    //   channel: channelId,
-    // });
+    client.chat.delete({
+      token: "3e6397de46d92d3555eba4e9f486726b",
+      ts: winningSuggestion.ts,
+      channel: channelId,
+    });
 
     //     const message = `
     // 1. Your fav option 1
