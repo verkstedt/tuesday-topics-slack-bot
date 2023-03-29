@@ -38,18 +38,10 @@ export default SlackFunction(
   async ({ inputs, client }) => {
     const { channelId } = inputs;
 
-    // let postMsgResponse = await client.chat.postMessage({
-    //   channel: "C123456",
-    //   text: "Hello World",a
-    // });
-    // const salutations = ["Hello", "Hi", "Howdy", "Hola", "Salut"];
-    // const salutation =
-    //   salutations[Math.floor(Math.random() * salutations.length)];
-    // const greeting =
-    //   `${salutation}, <@${recipient}>! :wave: Someone sent the following greeting: \n\n>${message}`;
     const history = await client.conversations.history({
       channel: channelId,
     });
+
     // Get the latest poll
     const pollMessage = history.messages?.filter((message) => {
       return message?.text.includes("Topics for Tuesday");
@@ -63,26 +55,31 @@ export default SlackFunction(
       ts: pollMessage.ts,
     });
 
+    // TODO Filter replies so only 1 user per reply
+
     const pollSuggestions = pollMessage.text.split(
-      "*Topics for Tuesday*",
+      "\n      *Topics for Tuesday*",
     )[1]
       .split("\n").filter((str) => Boolean(str.trim()));
 
-    console.log({ pollSuggestions });
+    console.log({ pollSuggestions, pollMessageReplies });
 
-    const votes = pollMessageReplies.messages.reduce((results, value) => {
-      if (!results[value.text]) {
-        results[value.text] = 1;
-      } else {
-        results[value.text] += 1;
-      }
+    const votes = pollMessageReplies.messages.filter((reply) => !reply?.bot_id)
+      .reduce((results, value) => {
+        if (!results[value.text]) {
+          results[value.text] = 1;
+        } else {
+          results[value.text] += 1;
+        }
 
-      return results;
-    }, {});
-
+        return results;
+      }, {});
+    console.log({ votes });
     const winnerIndex = Object.keys(votes).reduce((a, b) =>
       votes[a] > votes[b] ? a : b
     );
+
+    console.log({ winnerIndex });
 
     const winner = pollSuggestions.find((suggestion) =>
       suggestion.includes(`#${winnerIndex}`)
@@ -95,6 +92,34 @@ export default SlackFunction(
       ${winner}
       `,
     });
+
+    const suggestions = history.messages?.filter((message) => {
+      return message?.bot_id === "B04L8JDM2RH";
+    });
+
+    // {
+    //   type: "message",
+    //   subtype: "bot_message",
+    //   text: "Vedran Josipovic added a topic:\n&gt; _Hakans topic_",
+    //   ts: "1674642474.485009",
+    //   username: "Add Tuesday topic",
+    //   bot_id: "B04L8JDM2RH",
+    //   app_id: "A04KU612K9V",
+    //   blocks: [ [Object] ],
+    //   edited: { user: "B04L8JDM2RH", ts: "1674652657.000000" }
+    // },
+
+    const winningSuggestion = suggestions.find(({ text }) => {
+      const matches = winner.match(/#\d+ (.*)/);
+      console.log({ winner, text, matches });
+      return text.includes(`added a topic:\n&gt; ${matches[1]}`);
+    });
+    console.log({ winningSuggestion });
+    // client.chat.delete({
+    //   token:
+    //   ts: winningSuggestion.ts,
+    //   channel: channelId,
+    // });
 
     //     const message = `
     // 1. Your fav option 1
