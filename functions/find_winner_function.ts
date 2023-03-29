@@ -77,7 +77,7 @@ export default SlackFunction(
         return results;
       }, {});
     const voteKeys = Object.keys(votes);
-    console.log({ votes, voteKeys });
+
     let response;
     if (voteKeys.length) {
       const winnerIndex = voteKeys.reduce((a, b) =>
@@ -116,14 +116,13 @@ export default SlackFunction(
 
       const winningSuggestion = suggestions.find(({ text }) => {
         const matches = winner.match(/#\d+ (.*)/);
-        console.log({ winner, text, matches });
         return text.includes(`added a topic:\n&gt; ${matches[1]}`);
       });
-      console.log({ winningSuggestion });
-      client.chat.delete({
+      const deleteResult = await client.chat.delete({
         ts: winningSuggestion.ts,
         channel: channelId,
       });
+      console.log({ winningSuggestion, deleteResult });
     } else {
       response = await client.chat.postMessage({
         channel: channelId,
