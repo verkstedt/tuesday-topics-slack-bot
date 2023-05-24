@@ -1,5 +1,4 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
-import GreetingWorkflow from "./workflows/greeting_workflow.ts";
 import GrabTopicsWorkflow from "./workflows/grab_topics_workflow.ts";
 import FindWinnerWorkflow from "./workflows/find_winner_workflow.ts";
 import { SuggestionsDatastore } from "./datastores/suggestions.ts";
@@ -16,7 +15,6 @@ export default Manifest({
   icon: "assets/default_new_app_icon.png",
   workflows: [
     AddSuggestionWorkflow,
-    GreetingWorkflow,
     GrabTopicsWorkflow,
     FindWinnerWorkflow,
   ],

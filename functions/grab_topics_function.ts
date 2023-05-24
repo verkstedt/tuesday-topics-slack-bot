@@ -15,20 +15,11 @@ export const GrabTopicsFunctionDefinition = DefineFunction({
   input_parameters: {
     properties: {
       channelId: {
-        type: Schema.slack.types.channel_id,
+        type: Schema.types.string,
         description: "Channel ID ",
       },
     },
     required: ["channelId"],
-  },
-  output_parameters: {
-    properties: {
-      greeting: {
-        type: Schema.types.string,
-        description: "Greeting for the recipient",
-      },
-    },
-    required: ["greeting"],
   },
 });
 
@@ -47,38 +38,55 @@ export default SlackFunction(
     //   salutations[Math.floor(Math.random() * salutations.length)];
     // const greeting =
     //   `${salutation}, <@${recipient}>! :wave: Someone sent the following greeting: \n\n>${message}`;
-    const history = await client.conversations.history({
-      channel: channelId,
+    //     const history = await client.conversations.history({
+    //       channel: channelId,
+    //     });
+
+    //     const suggestions = history.messages?.filter((message) => {
+    //       return message?.bot_id === "B04L8JDM2RH";
+    //     }).reduce((list, msg, index) => {
+    //       return `${list}
+    // #${index + 1} ${msg.text.split("\n&gt; ")[1]}`;
+    //     }, "");
+
+    const data = await client.apps.datastore.query({
+      datastore: "suggestions",
+      expression: "#wasWinner = :value",
+      expression_attributes: { "#wasWinner": "wasWinner" },
+      expression_values: { ":value": 0 },
     });
 
-    const suggestions = history.messages?.filter((message) => {
-      return message?.bot_id === "B04L8JDM2RH";
-    }).reduce((list, msg, index) => {
-      return `${list}
-#${index + 1} ${msg.text.split("\n&gt; ")[1]}`;
-    }, "");
+    const suggestions = data?.items?.map(({ text }, index) =>
+      `${index + 1}. ${text}`
+    ).join("\n");
+    console.log({ channelId, suggestions });
 
     // const replies = await client.conversations.replies({
     //   channel: channelId,
     //   ts: "1674651917.270719",
     // });
     // const messages2 = await client.conversations.list();
-    const response = await client.chat.postMessage({
-      channel: channelId,
-      text: `
-      *Topics for Tuesday*
-      ${suggestions}
-      `,
-    });
 
-    //     const message = `
-    // 1. Your fav option 1
-    // 2. Your fav option 2
-    // 3. Your fav option 3
-    //     `;
+    try {
+      const response = await client.chat.postMessage({
+        channel: channelId,
+        text: `
+        *Topics for Tuesday*
+        ${suggestions}
+        `,
+      });
 
-    const message = response;
+      //     const message = `
+      // 1. Your fav option 1
+      // 2. Your fav option 2
+      // 3. Your fav option 3
+      //     `;
 
-    return { outputs: { message } };
+      const message = response;
+
+      return { outputs: { message } };
+    } catch (error) {
+      console.error({ error });
+    }
   },
 );

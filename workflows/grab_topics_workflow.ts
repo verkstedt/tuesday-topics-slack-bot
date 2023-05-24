@@ -8,9 +8,6 @@ const GrabTopicsWorkflow = DefineWorkflow({
   description: "Collate all the suggestions into a list",
   input_parameters: {
     properties: {
-      interactivity: {
-        type: Schema.slack.types.interactivity,
-      },
       channel: {
         type: Schema.slack.types.channel_id,
       },
@@ -26,7 +23,7 @@ const GrabTopicsWorkflow = DefineWorkflow({
 GrabTopicsWorkflow.addStep(
   GrabTopicsFunctionDefinition,
   {
-    channelId: "C04LTRX19MF",
+    channelId: "C0516JP35SM",
   },
 );
 

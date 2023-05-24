@@ -15,7 +15,7 @@ export const FindWinnerFunctionDefinition = DefineFunction({
   input_parameters: {
     properties: {
       channelId: {
-        type: Schema.slack.types.channel_id,
+        type: Schema.types.string,
         description: "Channel ID ",
       },
     },

@@ -5,10 +5,17 @@ const grabTopicsSelectionTrigger: Trigger = {
   name: "Grab Topics",
   type: TriggerTypes.Scheduled,
   workflow: "#/workflows/grab_topics_workflow", // Replace with custom function
-  inputs: {},
+  inputs: {
+    channelId: {
+      value: "C0516JP35SM",
+    },
+  },
   schedule: {
-    start_time: "2023-01-25T14:56:30Z",
+    start_time: "2023-05-24T14:02:40Z",
     timezone: "UTC",
+    frequency: {
+      type: "once",
+    },
     // frequency: {
     //   type: "weekly",
     //   on_days: ["Wednesday"],
