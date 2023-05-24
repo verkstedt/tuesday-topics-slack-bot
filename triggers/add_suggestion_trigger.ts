@@ -17,7 +17,7 @@ const trigger: Trigger<typeof AddSuggestionWorkflow.definition> = {
     filter: {
       version: 1,
       root: {
-        statement: "1 == 1",
+        statement: "{{data.user_id}} == null",
       },
     },
   },
@@ -25,7 +25,6 @@ const trigger: Trigger<typeof AddSuggestionWorkflow.definition> = {
     suggestion: {
       value: "{{data}}",
     },
-    channelId: 'C0516JP35SM'
   },
 };
 

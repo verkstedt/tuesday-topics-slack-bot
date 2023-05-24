@@ -1,1 +1,11 @@
-{}
+{
+  "apps": {
+    "verkstedt": {
+      "name": "verkstedt",
+      "app_id": "A059BH0A0JY",
+      "team_id": "T6HMM3NG2",
+      "IsDev": false
+    }
+  },
+  "default": "verkstedt"
+}
