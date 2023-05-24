@@ -38,14 +38,16 @@ export default SlackFunction(
   async ({ inputs, client }) => {
     const { channelId } = inputs;
 
-    const result = await client.apps.datastore.query({
+    const reponse = await client.apps.datastore.query({
       datastore: "suggestions",
       expression: "#wasWinner = :value",
       expression_attributes: {"#wasWinner": "wasWinner"},
       expression_values: { ":value": 0 },
     });
+
+    const validSuggestions = reponse.items.filter((item) => item.text);
      
-    console.log({result});
+    console.log({validSuggestions});
 
     return 
   },

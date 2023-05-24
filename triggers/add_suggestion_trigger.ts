@@ -25,6 +25,7 @@ const trigger: Trigger<typeof AddSuggestionWorkflow.definition> = {
     suggestion: {
       value: "{{data}}",
     },
+    channelId: 'C0516JP35SM'
   },
 };
 

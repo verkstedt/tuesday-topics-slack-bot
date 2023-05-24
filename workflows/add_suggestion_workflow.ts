@@ -11,6 +11,9 @@ const AddSuggestionWorkflow = DefineWorkflow({
       suggestion: {
         type: Schema.types.object,
       },
+      channelId: {
+        type: Schema.types.string,
+      }
     },
     required: ["suggestion"],
   },
@@ -20,6 +23,7 @@ AddSuggestionWorkflow.addStep(
   AddSuggestionFunctionDefinition,
   {
     suggestion: AddSuggestionWorkflow.inputs.suggestion,
+    channelId: AddSuggestionWorkflow.inputs.channelId
   },
 );
 
