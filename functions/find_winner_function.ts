@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { SlackAPI } from "deno-slack-api/mod.ts";
 
@@ -36,7 +37,6 @@ export default SlackFunction(
   FindWinnerFunctionDefinition,
   // @ts-ignore
   async ({ inputs, client }) => {
-    const suggestTopicId = "B04L8JDM2RH";
     const { channelId } = inputs;
 
     const history = await client.conversations.history({
@@ -99,7 +99,7 @@ export default SlackFunction(
       });
 
       const suggestions = history.messages?.filter((message) => {
-        return message?.bot_id === suggestTopicId;
+        return message?.username === "Add Tuesday topic";
       });
 
       // {
@@ -118,11 +118,6 @@ export default SlackFunction(
         const matches = winner.match(/#\d+ (.*)/);
         return text.includes(`added a topic:\n&gt; ${matches[1]}`);
       });
-      const deleteResult = await client.chat.delete({
-        ts: winningSuggestion.ts,
-        channel: channelId,
-      });
-      console.log({ winningSuggestion, deleteResult });
     } else {
       response = await client.chat.postMessage({
         channel: channelId,

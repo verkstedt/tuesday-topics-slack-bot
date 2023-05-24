@@ -1,6 +1,6 @@
+// @ts-nocheck
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { SlackAPI } from "deno-slack-api/mod.ts";
-
 /**
  * Functions are reusable building blocks of automation that accept
  * inputs, perform calculations, and provide outputs. Functions can
@@ -54,7 +54,7 @@ export default SlackFunction(
     // console.log({ history });
 
     const suggestions = history.messages?.filter((message) => {
-      return message?.bot_id === "B04L8JDM2RH"; // This should be the ID of the "suggestion workflow"
+      return message?.username === "Add Tuesday topic"; // This should be the ID of the "suggestion workflow"
     }).reduce((list, msg, index) => {
       return `${list}
 #${index + 1} ${msg.text.split("\n&gt; ")[1]}`;

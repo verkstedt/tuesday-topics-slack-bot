@@ -7,13 +7,13 @@ const grabTopicsSelectionTrigger: Trigger = {
   workflow: "#/workflows/grab_topics_workflow", // Replace with custom function
   inputs: {},
   schedule: {
-    start_time: "2023-03-29T13:15:00.820Z",
+    start_time: "2023-04-05T07:00:00.000Z",
     timezone: "UTC",
-    // frequency: {
-    //   type: "weekly",
-    //   on_days: ["Wednesday"],
-    //   repeats_every: 1,
-    // },
+    frequency: {
+      type: "weekly",
+      on_days: ["Wednesday"],
+      repeats_every: 1,
+    },
   },
 };
 
