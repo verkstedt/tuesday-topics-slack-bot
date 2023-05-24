@@ -6,7 +6,7 @@ export const SuggestionsDatastore = DefineDatastore({
   primary_key: "id",
   attributes: {
     id: { type: Schema.types.string },
-    suggestion: { type: Schema.types.string },
+    text: { type: Schema.types.string },
     suggester: { type: Schema.types.string },
     createdAt: { type: Schema.types.string },
     currentEmote: { type: Schema.types.string },
