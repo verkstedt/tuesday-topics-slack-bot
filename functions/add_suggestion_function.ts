@@ -29,19 +29,18 @@ export default SlackFunction(
   async ({ inputs, client }) => {
     console.log("inputs: \n");
     console.log(JSON.stringify(inputs));
-    // console.log("New suggestion: \n");
-    // console.log(inputs.suggestion);
 
     const uuid = crypto.randomUUID();
     const response = await client.apps.datastore.put({
       datastore: "suggestions",
       item: {
         id: uuid,
-        text: inputs.suggestion.text,
+        text: inputs.suggestion.text.split(' added a topic:\n&gt; ')[1],
+        suggester: inputs.suggestion.text.split(' added a topic:\n&gt; ')[0],
         createdAt: new Date().toISOString(),
         currentEmote: "",
         currentVoteCount: 0,
-        wasWinner: false,
+        wasWinner: 0,
       },
     });
 

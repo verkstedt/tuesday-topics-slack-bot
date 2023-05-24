@@ -11,6 +11,6 @@ export const SuggestionsDatastore = DefineDatastore({
     createdAt: { type: Schema.types.string },
     currentEmote: { type: Schema.types.string },
     currentVoteCount: { type: Schema.types.number },
-    wasWinner: { type: Schema.types.boolean },
+    wasWinner: { type: Schema.types.number },
   },
 });

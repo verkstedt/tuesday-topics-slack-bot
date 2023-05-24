@@ -38,72 +38,15 @@ export default SlackFunction(
   async ({ inputs, client }) => {
     const { channelId } = inputs;
 
-    // let postMsgResponse = await client.chat.postMessage({
-    //   channel: "C123456",
-    //   text: "Hello World",a
-    // });
-    // const salutations = ["Hello", "Hi", "Howdy", "Hola", "Salut"];
-    // const salutation =
-    //   salutations[Math.floor(Math.random() * salutations.length)];
-    // const greeting =
-    //   `${salutation}, <@${recipient}>! :wave: Someone sent the following greeting: \n\n>${message}`;
-    const history = await client.conversations.history({
-      channel: channelId,
+    const result = await client.apps.datastore.query({
+      datastore: "suggestions",
+      expression: "#wasWinner = :value",
+      expression_attributes: {"#wasWinner": "wasWinner"},
+      expression_values: { ":value": 0 },
     });
-    // Get the latest poll
-    const pollMessage = history.messages?.filter((message) => {
-      return message?.text.includes("Topics for Tuesday");
-    })[0];
+     
+    console.log({result});
 
-    // Get ID of pollMessage
-    // Send request to get thread
-    //
-    const pollMessageReplies = await client.conversations.replies({
-      channel: channelId,
-      ts: pollMessage.ts,
-    });
-
-    const pollSuggestions = pollMessage.text.split(
-      "*Topics for Tuesday*",
-    )[1]
-      .split("\n").filter((str) => Boolean(str.trim()));
-
-    console.log({ pollSuggestions });
-
-    const votes = pollMessageReplies.messages.reduce((results, value) => {
-      if (!results[value.text]) {
-        results[value.text] = 1;
-      } else {
-        results[value.text] += 1;
-      }
-
-      return results;
-    }, {});
-
-    const winnerIndex = Object.keys(votes).reduce((a, b) =>
-      votes[a] > votes[b] ? a : b
-    );
-
-    const winner = pollSuggestions.find((suggestion) =>
-      suggestion.includes(`#${winnerIndex}`)
-    );
-
-    const response = await client.chat.postMessage({
-      channel: channelId,
-      text: `
-      *The winner is...*
-      ${winner}
-      `,
-    });
-
-    //     const message = `
-    // 1. Your fav option 1
-    // 2. Your fav option 2
-    // 3. Your fav option 3
-    //     `;
-
-    const message = response;
-
-    return { outputs: { message } };
+    return 
   },
 );
