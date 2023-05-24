@@ -23,10 +23,7 @@ const trigger: Trigger<typeof AddSuggestionWorkflow.definition> = {
   },
   inputs: {
     suggestion: {
-      value: {
-        event_timestamp: "{{event_timestamp}}",
-        data: "{{data}}"
-      },
+      value: "{{data}}",
     },
   },
 };

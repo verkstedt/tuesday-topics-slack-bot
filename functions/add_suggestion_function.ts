@@ -28,7 +28,7 @@ export default SlackFunction(
   AddSuggestionFunctionDefinition,
   async ({ inputs, client }) => {
     console.log("inputs: \n");
-    console.log(JSON.stringify(inputs))
+    console.log(JSON.stringify(inputs));
     // console.log("New suggestion: \n");
     // console.log(inputs.suggestion);
 
@@ -37,8 +37,8 @@ export default SlackFunction(
       datastore: "suggestions",
       item: {
         id: uuid,
-        text: inputs.suggestion.data.text,
-        createdAt: inputs.suggestion.event_timestamp,
+        text: inputs.suggestion.text,
+        createdAt: new Date().toISOString(),
         currentEmote: "",
         currentVoteCount: 0,
         wasWinner: false,
