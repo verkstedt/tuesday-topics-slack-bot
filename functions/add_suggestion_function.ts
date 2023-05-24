@@ -27,17 +27,17 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
 export default SlackFunction(
   AddSuggestionFunctionDefinition,
   async ({ inputs, client }) => {
-console.log("New suggestion: \n");
-    console.log(inputs)
-    console.log("New suggestion: \n");
-    console.log(inputs.suggestion);
+    console.log("inputs: \n");
+    console.log(JSON.stringify(inputs))
+    // console.log("New suggestion: \n");
+    // console.log(inputs.suggestion);
 
     const uuid = crypto.randomUUID();
     const response = await client.apps.datastore.put({
       datastore: "suggestions",
       item: {
         id: uuid,
-        text: inputs.suggestion.text,
+        text: inputs.suggestion.data.text,
         createdAt: inputs.suggestion.event_timestamp,
         currentEmote: "",
         currentVoteCount: 0,
@@ -49,7 +49,7 @@ console.log("New suggestion: \n");
       const error = `Failed to save a row in datastore: ${response.error}`;
       return { error };
     } else {
-      console.log(`A new row saved: ${JSON.stringify(response.item}`);
+      console.log(`A new row saved: ${JSON.stringify(response.item)}`);
       return { outputs: {} };
     }
 
