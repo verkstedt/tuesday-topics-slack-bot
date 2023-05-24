@@ -31,7 +31,7 @@ const isSuggestionUnique = async (client, text) => {
     expression_values: { ":text": text },
   });
 
-  return Boolean(response.items.filter((item) => item.text).length);
+  return !response.ok ? false : Boolean(response.items.filter((item) => item.text).length);
 }
 
 export default SlackFunction(
