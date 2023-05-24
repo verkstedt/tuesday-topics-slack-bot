@@ -15,7 +15,7 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
   input_parameters: {
     properties: {
       suggestion: {
-        type: Schema.types.string,
+        type: Schema.types.object,
         description:
           "Whole Suggestion obj comming from event trigger stringified",
       },

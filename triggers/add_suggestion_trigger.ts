@@ -23,7 +23,7 @@ const trigger: Trigger<typeof AddSuggestionWorkflow.definition> = {
   },
   inputs: {
     suggestion: {
-      value: JSON.stringify("{{data}}"),
+      value: "{{data}}",
     },
   },
 };

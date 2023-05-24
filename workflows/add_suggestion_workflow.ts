@@ -9,7 +9,7 @@ const AddSuggestionWorkflow = DefineWorkflow({
   input_parameters: {
     properties: {
       suggestion: {
-        type: Schema.types.string,
+        type: Schema.types.object,
       },
     },
     required: ["suggestion"],
@@ -19,7 +19,7 @@ const AddSuggestionWorkflow = DefineWorkflow({
 AddSuggestionWorkflow.addStep(
   AddSuggestionFunctionDefinition,
   {
-    suggestion: JSON.stringify(AddSuggestionWorkflow.inputs.suggestion),
+    suggestion: AddSuggestionWorkflow.inputs.suggestion,
   },
 );
 
