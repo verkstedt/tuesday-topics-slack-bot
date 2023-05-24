@@ -27,6 +27,8 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
 export default SlackFunction(
   AddSuggestionFunctionDefinition,
   async ({ inputs, client }) => {
+console.log("New suggestion: \n");
+    console.log(inputs)
     console.log("New suggestion: \n");
     console.log(inputs.suggestion);
 
@@ -47,7 +49,7 @@ export default SlackFunction(
       const error = `Failed to save a row in datastore: ${response.error}`;
       return { error };
     } else {
-      console.log(`A new row saved: ${response.item}`);
+      console.log(`A new row saved: ${JSON.stringify(response.item}`);
       return { outputs: {} };
     }
 
