@@ -4,8 +4,9 @@ import {
   TriggerEventTypes,
   TriggerTypes,
 } from "deno-slack-api/mod.ts";
+import AddSuggestionWorkflow from "../workflows/add_suggestion_workflow.ts";
 
-const trigger: Trigger<typeof ExampleWorkflow.definition> = {
+const trigger: Trigger<typeof AddSuggestionWorkflow.definition> = {
   type: TriggerTypes.Event,
   name: "Reactji response",
   description: "responds to a specific reactji",
@@ -16,13 +17,13 @@ const trigger: Trigger<typeof ExampleWorkflow.definition> = {
     filter: {
       version: 1,
       root: {
-        statement: "{{data.text}} != ''",
+        statement: "{{data.user_id}} === 'U04KU61458X'",
       },
     },
   },
   inputs: {
     suggestion: {
-      value: "{{data.text}}",
+      value: JSON.stringify("{{data}}"),
     },
   },
 };

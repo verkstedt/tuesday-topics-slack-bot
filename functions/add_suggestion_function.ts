@@ -30,7 +30,7 @@ export default SlackFunction(
     console.log("inputs: \n");
     console.log(inputs);
     console.log("New suggestion: \n");
-    console.log(AddSuggestionFunctionDefinition.inputs.suggestion);
+    console.log(inputs.suggestion);
 
     return {};
   },
