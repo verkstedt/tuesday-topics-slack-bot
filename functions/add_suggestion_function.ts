@@ -39,11 +39,8 @@ const isSuggestionUnique = async (client, text) => {
 export default SlackFunction(
   AddSuggestionFunctionDefinition,
   async ({ inputs, client }) => {
-    console.log("inputs: \n");
-    console.log(JSON.stringify(inputs));
-
     const { suggestion } = inputs;
-    const text = suggestion.text.split(" added a topic:\n&gt; ")[1];
+    const [suggester, text] = suggestion.text.split(" added a topic:\n&gt; ");
     const uuid = crypto.randomUUID();
     const isUnique = await isSuggestionUnique(client, text);
 
@@ -61,7 +58,7 @@ export default SlackFunction(
       item: {
         id: uuid,
         text,
-        suggester: suggestion.text.split(" added a topic:\n&gt; ")[0],
+        suggester,
         createdAt: new Date().toISOString(),
         currentEmote: "",
         currentVoteCount: 0,
