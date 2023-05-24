@@ -33,12 +33,12 @@ console.log("New suggestion: \n");
     console.log(inputs.suggestion);
 
     const uuid = crypto.randomUUID();
-    const response = await client.apps.datastore.put({ 
+    const response = await client.apps.datastore.put({
       datastore: "suggestions",
       item: {
         id: uuid,
         text: inputs.suggestion.text,
-        createdAd: inputs.suggestion.event_timestamp,
+        createdAt: inputs.suggestion.event_timestamp,
         currentEmote: "",
         currentVoteCount: 0,
         wasWinner: false,

@@ -17,7 +17,7 @@ const trigger: Trigger<typeof AddSuggestionWorkflow.definition> = {
     filter: {
       version: 1,
       root: {
-        statement: "{{data.user_id}} === 'U04KU61458X'",
+        statement: "1 == 1",
       },
     },
   },
