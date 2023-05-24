@@ -9,7 +9,7 @@ const AddSuggestionWorkflow = DefineWorkflow({
   input_parameters: {
     properties: {
       suggestion: {
-        type: Schema.slack.types.string,
+        type: Schema.types.string,
       },
     },
     required: ["suggestion"],
@@ -21,6 +21,6 @@ AddSuggestionWorkflow.addStep(
   {
     suggestion: JSON.stringify(AddSuggestionWorkflow.inputs.suggestion),
   },
-);  
+);
 
 export default AddSuggestionWorkflow;

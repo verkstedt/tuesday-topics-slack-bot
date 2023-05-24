@@ -15,8 +15,9 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
   input_parameters: {
     properties: {
       suggestion: {
-        type: Schema.slack.types.string,
-        description: "Whole Suggestion obj comming from event trigger stringified",
+        type: Schema.types.string,
+        description:
+          "Whole Suggestion obj comming from event trigger stringified",
       },
     },
     required: ["suggestion"],
@@ -26,9 +27,9 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
 export default SlackFunction(
   AddSuggestionFunctionDefinition,
   async ({ inputs, client }) => {
-    console.log("inputs: \n")
-    console.log(inputs)
-    console.log('New suggestion: \n');
+    console.log("inputs: \n");
+    console.log(inputs);
+    console.log("New suggestion: \n");
     console.log(AddSuggestionFunctionDefinition.inputs.suggestion);
 
     return {};
