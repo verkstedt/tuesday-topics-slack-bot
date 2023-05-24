@@ -42,16 +42,16 @@ export default SlackFunction(
     const { suggestion } = inputs;
     const [suggester, text] = suggestion.text.split(" added a topic:\n&gt; ");
     const uuid = crypto.randomUUID();
-    const isUnique = await isSuggestionUnique(client, text);
+    // const isUnique = await isSuggestionUnique(client, text);
+    // console.log({ isUnique });
+    // if (!isUnique) {
+    //   await client.chat.postMessage({
+    //     channel: "C0516JP35SM",
+    //     text: `Suggestion "${text}" already exists.`,
+    //   });
 
-    if (!isUnique) {
-      await client.chat.postMessage({
-        channel: "C0516JP35SM",
-        text: `Suggestion "${text}" already exists.`,
-      });
-
-      return { outputs: {} };
-    }
+    //   return { outputs: {} };
+    // }
 
     const response = await client.apps.datastore.put({
       datastore: "suggestions",
