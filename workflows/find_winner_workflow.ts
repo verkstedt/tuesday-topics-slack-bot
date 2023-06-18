@@ -6,31 +6,26 @@ const FindWinnerWorkflow = DefineWorkflow({
   callback_id: "find_winner_workflow",
   title: "Find the Winner",
   description: "Determine the winner",
-  input_parameters: {
+  output_parameters: {
     properties: {
-      channel: {
+      winner: {
         type: Schema.types.string,
       },
     },
     required: [],
   },
 });
-// GreetingWorkflow.addStep(Schema.slack.functions.SendMessage, {
-//   channel_id: inputForm.outputs.fields.channel,
-//   message: greetingFunctionStep.outputs.greeting,
-// });
 
-FindWinnerWorkflow.addStep(
+const findWinner = FindWinnerWorkflow.addStep(
   FindWinnerFunctionDefinition,
-  {
-    channelId: "C0516JP35SM",
-  },
+  {},
 );
 
-// GrabTopicsWorkflow.addStep(Schema.slack.functions.SendMessage, {
-//   channel_id: "GQQJ2QD45",
-//   message: "our message",
-// });
+FindWinnerWorkflow.addStep(Schema.slack.functions.SendMessage, {
+  channel_id: "C0516JP35SM",
+  message:
+    `And the winner is... :drum_with_drumsticks:\n${findWinner.outputs.winner}`,
+});
 
 // GrabTopicsWorkflow.addStep(GrabTopicsFunctionDefinition);
 

@@ -12,43 +12,63 @@ export const FindWinnerFunctionDefinition = DefineFunction({
   title: "Find winner",
   description: "Find winner",
   source_file: "functions/find_winner_function.ts",
-  input_parameters: {
-    properties: {
-      channelId: {
-        type: Schema.types.string,
-        description: "Channel ID ",
-      },
-    },
-    required: ["channelId"],
-  },
   output_parameters: {
     properties: {
-      greeting: {
+      winner: {
         type: Schema.types.string,
-        description: "Greeting for the recipient",
+        description: "The winning result",
       },
     },
-    required: ["greeting"],
+    required: ["winner"],
   },
 });
 
 export default SlackFunction(
   FindWinnerFunctionDefinition,
   // @ts-ignore
-  async ({ inputs, client }) => {
-    const { channelId } = inputs;
-
-    const response = await client.apps.datastore.query({
-      datastore: "suggestions",
-      expression: "#wasWinner = :value",
-      expression_attributes: { "#wasWinner": "wasWinner" },
-      expression_values: { ":value": 0 },
+  async ({ client }) => {
+    const history = await client.conversations.history({
+      channel: "C0516JP35SM",
     });
 
-    const validSuggestions = response.items?.filter((item) => item.text);
+    const pollMessage = history.messages?.filter((message) => {
+      return message?.text.includes("Topics for Tuesday");
+    })[0];
 
-    console.log({ validSuggestions });
+    const winningReaction = pollMessage.reactions.reduce((max, reaction) =>
+      max.count > reaction.count ? max : reaction
+    );
 
-    return;
+    const pollSuggestions = pollMessage.text.split(
+      "*Topics for Tuesday*",
+    )[1]
+      .split("\n").map((str: string) => str.trim()).filter(Boolean);
+
+    const winner = pollSuggestions.find((suggestion: string) =>
+      suggestion.startsWith(`:${winningReaction.name}:`)
+    );
+
+    const suggestionKey = winner.replace(`:${winningReaction.name}: `, "");
+
+    await client.apps.datastore.update({
+      datastore: "suggestions",
+      item: {
+        id: suggestionKey,
+        wasWinner: 1,
+      },
+    });
+
+    pollSuggestions.map(async (sugg) => {
+      await client.apps.datastore.delete({
+        datastore: "suggestions",
+        id: sugg,
+      });
+    });
+
+    return {
+      outputs: {
+        winner,
+      },
+    };
   },
 );
