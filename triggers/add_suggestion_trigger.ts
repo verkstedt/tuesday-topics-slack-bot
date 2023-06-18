@@ -1,29 +1,15 @@
 import { Trigger } from "deno-slack-api/types.ts";
-import {
-  TriggerContextData,
-  TriggerEventTypes,
-  TriggerTypes,
-} from "deno-slack-api/mod.ts";
+import { TriggerContextData, TriggerTypes } from "deno-slack-api/mod.ts";
 import AddSuggestionWorkflow from "../workflows/add_suggestion_workflow.ts";
 
 const trigger: Trigger<typeof AddSuggestionWorkflow.definition> = {
-  type: TriggerTypes.Event,
-  name: "Reactji response",
-  description: "responds to a specific reactji",
+  type: TriggerTypes.Shortcut,
+  name: "Trigger suggest topic",
+  description: "Suggest a topic for Tuesday background day",
   workflow: "#/workflows/add_suggestion_workflow",
-  event: {
-    event_type: TriggerEventTypes.MessagePosted,
-    channel_ids: ["C0516JP35SM"],
-    filter: {
-      version: 1,
-      root: {
-        statement: "{{data.user_id}} == null",
-      },
-    },
-  },
   inputs: {
-    suggestion: {
-      value: "{{data}}",
+    interactivity: {
+      value: TriggerContextData.Shortcut.interactivity,
     },
   },
 };

@@ -34,5 +34,7 @@ export default Manifest({
     "im:history",
     "datastore:read",
     "datastore:write",
+    "emoji:read",
+    "users.profile:read",
   ],
 });
