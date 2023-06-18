@@ -6,11 +6,6 @@ const grabTopicsSelectionTrigger: Trigger = {
   // type: TriggerTypes.Scheduled,
   type: TriggerTypes.Shortcut,
   workflow: "#/workflows/grab_topics_workflow", // Replace with custom function
-  inputs: {
-    channelId: {
-      value: "C0516JP35SM",
-    },
-  },
   // schedule: {
   //   start_time: "2023-05-24T14:02:40Z",
   //   timezone: "UTC",

@@ -1,4 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import { CHANNEL_ID } from "../consts.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -64,7 +65,7 @@ export default SlackFunction(
 
       if (uniqueCheck.item?.id) {
         await client.chat.postMessage({
-          channel: "C0516JP35SM",
+          channel: CHANNEL_ID,
           text: `Suggestion "${suggestion}" already exists.`,
         });
 
@@ -87,28 +88,15 @@ export default SlackFunction(
           wasWinner: 0,
         },
       });
-      console.log({ response });
+
       if (!response.ok) {
         const error = `Failed to save a row in datastore: ${response.error}`;
         return { error };
       } else {
         console.log(`A new row saved: ${JSON.stringify(response.item)}`);
 
-        const history = await client.conversations.history({
-          channel: "C0516JP35SM",
-        });
-
-        const pollMessage = history.messages?.filter((message) => {
-          return message?.text.includes("Topics for Tuesday");
-        })[0];
-        console.log({ pollMessage });
-        // await client.chat.update({
-        //   channel: 'C0516JP35SM',
-        //   ts: pollMessage.ts
-        // })
-
         await client.chat.postMessage({
-          channel: "C0516JP35SM",
+          channel: CHANNEL_ID,
           text:
             `${user.profile.display_name} has added a topic.\n> ${suggestion}`,
         });
@@ -118,7 +106,7 @@ export default SlackFunction(
     } catch (error) {
       console.log({ error });
       await client.chat.postMessage({
-        channel: "C0516JP35SM",
+        channel: CHANNEL_ID,
         text: `Sorry, the topic suggestion failed :cry:. Please try again.`,
       });
     }

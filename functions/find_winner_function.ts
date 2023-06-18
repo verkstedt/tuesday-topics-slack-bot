@@ -1,5 +1,5 @@
+import { CHANNEL_ID, TOPICS_TITLE } from "../consts.ts";
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { SlackAPI } from "deno-slack-api/mod.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -28,7 +28,7 @@ export default SlackFunction(
   // @ts-ignore
   async ({ client }) => {
     const history = await client.conversations.history({
-      channel: "C0516JP35SM",
+      channel: CHANNEL_ID,
     });
 
     const pollMessage = history.messages?.filter((message) => {
@@ -40,7 +40,7 @@ export default SlackFunction(
     );
 
     const pollSuggestions = pollMessage.text.split(
-      "*Topics for Tuesday*",
+      TOPICS_TITLE,
     )[1]
       .split("\n").map((str: string) => str.trim()).filter(Boolean);
 
@@ -56,13 +56,6 @@ export default SlackFunction(
         id: suggestionKey,
         wasWinner: 1,
       },
-    });
-
-    pollSuggestions.map(async (sugg) => {
-      await client.apps.datastore.delete({
-        datastore: "suggestions",
-        id: sugg,
-      });
     });
 
     return {

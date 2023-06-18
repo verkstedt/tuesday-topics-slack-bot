@@ -1,4 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import { TOPICS_TITLE } from "../consts.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -41,16 +42,15 @@ export default SlackFunction(
     if (suggestions.length) {
       return {
         outputs: {
-          message: `*Topics for Tuesday*\n${suggestions}`,
+          message: `${TOPICS_TITLE}\n${suggestions}`,
         },
       };
     }
 
     return {
       outputs: {
-        message: `
-        *Topics for Tuesday*\nThere are no topics to left :tumbleweed:. Please suggest one!
-        `,
+        message:
+          `${TOPICS_TITLE}\nThere are no topics to left :tumbleweed:. Please suggest one!`,
       },
     };
   },
