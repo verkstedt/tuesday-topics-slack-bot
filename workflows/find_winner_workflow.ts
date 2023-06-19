@@ -2,6 +2,7 @@ import { Schema } from "deno-slack-sdk/mod.ts";
 import { DefineWorkflow } from "deno-slack-sdk/mod.ts";
 import { CHANNEL_ID } from "../consts.ts";
 import { FindWinnerFunctionDefinition } from "../functions/find_winner_function.ts";
+import { UpdatePollAfterCompleteFunctionDefinition } from "../functions/update_poll_after_complete_function.ts";
 
 const FindWinnerWorkflow = DefineWorkflow({
   callback_id: "find_winner_workflow",
@@ -28,6 +29,6 @@ FindWinnerWorkflow.addStep(Schema.slack.functions.SendMessage, {
     `And the winner is... :drum_with_drumsticks:\n${findWinner.outputs.winner}`,
 });
 
-// GrabTopicsWorkflow.addStep(GrabTopicsFunctionDefinition);
+FindWinnerWorkflow.addStep(UpdatePollAfterCompleteFunctionDefinition, {});
 
 export default FindWinnerWorkflow;
