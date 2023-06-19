@@ -1,5 +1,6 @@
-import { CHANNEL_ID, TOPICS_TITLE } from "../consts.ts";
+import { TOPICS_TITLE } from "../consts.ts";
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import getPollMessage from "../utils/getPollMessage.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -27,13 +28,7 @@ export default SlackFunction(
   FindWinnerFunctionDefinition,
   // @ts-ignore
   async ({ client }) => {
-    const history = await client.conversations.history({
-      channel: CHANNEL_ID,
-    });
-
-    const pollMessage = history.messages?.filter((message) => {
-      return message?.text.includes("Topics for Tuesday");
-    })[0];
+    const pollMessage = await getPollMessage(client);
 
     const winningReaction = pollMessage.reactions.reduce((max, reaction) =>
       max.count > reaction.count ? max : reaction

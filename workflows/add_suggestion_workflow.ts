@@ -1,6 +1,8 @@
 import { Schema } from "deno-slack-sdk/mod.ts";
 import { DefineWorkflow } from "deno-slack-sdk/mod.ts";
 import { AddSuggestionFunctionDefinition } from "../functions/add_suggestion_function.ts";
+import { GrabTopicsFunctionDefinition } from "../functions/grab_topics_function.ts";
+import { UpdatePollFunctionDefinition } from "../functions/update_poll_function.ts";
 
 const AddSuggestionWorkflow = DefineWorkflow({
   callback_id: "add_suggestion_workflow",
@@ -35,6 +37,7 @@ const form = AddSuggestionWorkflow.addStep(
         title: "Suggested Topic",
         type: Schema.types.string,
       }],
+      required: ["suggestion"],
     },
   },
 );
@@ -46,5 +49,14 @@ AddSuggestionWorkflow.addStep(
     suggestor: AddSuggestionWorkflow.inputs.interactivity.interactor.id,
   },
 );
+
+const poll = AddSuggestionWorkflow.addStep(
+  GrabTopicsFunctionDefinition,
+  {},
+);
+
+AddSuggestionWorkflow.addStep(UpdatePollFunctionDefinition, {
+  message: poll.outputs.message,
+});
 
 export default AddSuggestionWorkflow;

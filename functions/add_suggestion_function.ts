@@ -37,15 +37,19 @@ const getEmoji = async (client): Promise<string> => {
   const emojisInUse = activeTopics.items.map((activeTopic) =>
     activeTopic.currentEmote
   );
-  const emojiList = await client.emoji.list();
-  const emojiKeys = Object.keys(emojiList.emoji).map((emojiKey) =>
-    `:${emojiKey}:`
+  const allEmojis = await client.emoji.list({ include_categories: true });
+  const emojiList = allEmojis.categories.reduce(
+    (acc: string[], { emoji_names }: { emoji_names: string[] }) => {
+      return acc.concat(emoji_names);
+    },
+    [],
   );
+
+  const emojiKeys = emojiList.map((emojiKey) => `:${emojiKey}:`);
   const availableEmojis = emojiKeys.filter((emojiKey) =>
     !emojisInUse.includes(emojiKey)
   );
 
-  console.log({ emojiList, emojiKeys, availableEmojis });
   return availableEmojis[Math.floor(Math.random() * availableEmojis.length)];
 };
 
