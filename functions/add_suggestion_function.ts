@@ -1,5 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { CHANNEL_ID } from "../consts.ts";
+import { TODOAny } from "../types.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -27,14 +28,14 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
   },
 });
 
-const getEmoji = async (client): Promise<string> => {
+const getEmoji = async (client: TODOAny): Promise<string> => {
   const activeTopics = await client.apps.datastore.query({
     datastore: "suggestions",
     expression: "#wasWinner = :value",
     expression_attributes: { "#wasWinner": "wasWinner" },
     expression_values: { ":value": 0 },
   });
-  const emojisInUse = activeTopics.items.map((activeTopic) =>
+  const emojisInUse = activeTopics.items.map((activeTopic: TODOAny) =>
     activeTopic.currentEmote
   );
   const allEmojis = await client.emoji.list({ include_categories: true });
@@ -45,8 +46,8 @@ const getEmoji = async (client): Promise<string> => {
     [],
   );
 
-  const emojiKeys = emojiList.map((emojiKey) => `:${emojiKey}:`);
-  const availableEmojis = emojiKeys.filter((emojiKey) =>
+  const emojiKeys = emojiList.map((emojiKey: string) => `:${emojiKey}:`);
+  const availableEmojis = emojiKeys.filter((emojiKey: string) =>
     !emojisInUse.includes(emojiKey)
   );
 
@@ -55,6 +56,7 @@ const getEmoji = async (client): Promise<string> => {
 
 export default SlackFunction(
   AddSuggestionFunctionDefinition,
+  // @ts-ignore
   async ({ inputs, client }) => {
     const { suggestion, suggestor } = inputs;
     const user = await client.users.profile.get({

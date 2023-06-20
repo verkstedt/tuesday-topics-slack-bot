@@ -1,6 +1,7 @@
 import { TOPICS_TITLE } from "../consts.ts";
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import getPollMessage from "../utils/getPollMessage.ts";
+import { TODOAny } from "../types.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -30,9 +31,10 @@ export default SlackFunction(
   async ({ client }) => {
     const pollMessage = await getPollMessage(client);
 
-    const winningReaction = pollMessage.reactions.reduce((max, reaction) =>
-      max.count > reaction.count ? max : reaction
-    );
+    const winningReaction = pollMessage.reactions.reduce((
+      max: TODOAny,
+      reaction: TODOAny,
+    ) => max.count > reaction.count ? max : reaction);
 
     const pollSuggestions = pollMessage.text.split(
       TOPICS_TITLE,
