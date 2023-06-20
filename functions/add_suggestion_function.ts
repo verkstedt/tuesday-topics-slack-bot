@@ -1,4 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import { OpenAI } from "https://deno.land/x/openai/mod.ts";
 import { CHANNEL_ID } from "../consts.ts";
 import { TODOAny } from "../types.ts";
 
@@ -57,7 +58,7 @@ const getEmoji = async (client: TODOAny): Promise<string> => {
 export default SlackFunction(
   AddSuggestionFunctionDefinition,
   // @ts-ignore
-  async ({ inputs, client }) => {
+  async ({ inputs, client, env }) => {
     const { suggestion, suggestor } = inputs;
     const user = await client.users.profile.get({
       user: suggestor,
@@ -79,7 +80,15 @@ export default SlackFunction(
           outputs: {},
         };
       }
-
+      const openAI = new OpenAI(env["OPEN_API_KEY"]);
+      const completion = await openAI.createCompletion({
+        model: "text-davinci-003",
+        prompt:
+          `Choose up to 5 emojis that fit the topic "${suggestion}", and give them in the Slack format`,
+      });
+      const result = completion.choices[0].text;
+      const extractedEmojis = result.matchAll(/(:[a-z_]+:)/g);
+      console.dir({ result: completion.choices, extractedEmojis });
       const emoji = await getEmoji(client);
 
       const response = await client.apps.datastore.put({

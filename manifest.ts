@@ -18,7 +18,9 @@ export default Manifest({
     GrabTopicsWorkflow,
     FindWinnerWorkflow,
   ],
-  outgoingDomains: [],
+  outgoingDomains: [
+    "api.openai.com",
+  ],
   datastores: [SuggestionsDatastore], // Add the database to this list
   botScopes: [
     "commands",
