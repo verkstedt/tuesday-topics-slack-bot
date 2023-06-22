@@ -1,5 +1,7 @@
+import { TOPICS_TITLE } from "../consts.ts";
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { SlackAPI } from "deno-slack-api/mod.ts";
+import getPollMessage from "../utils/getPollMessage.ts";
+import { TODOAny } from "../types.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -12,43 +14,51 @@ export const FindWinnerFunctionDefinition = DefineFunction({
   title: "Find winner",
   description: "Find winner",
   source_file: "functions/find_winner_function.ts",
-  input_parameters: {
-    properties: {
-      channelId: {
-        type: Schema.types.string,
-        description: "Channel ID ",
-      },
-    },
-    required: ["channelId"],
-  },
   output_parameters: {
     properties: {
-      greeting: {
+      winner: {
         type: Schema.types.string,
-        description: "Greeting for the recipient",
+        description: "The winning result",
       },
     },
-    required: ["greeting"],
+    required: ["winner"],
   },
 });
 
 export default SlackFunction(
   FindWinnerFunctionDefinition,
   // @ts-ignore
-  async ({ inputs, client }) => {
-    const { channelId } = inputs;
+  async ({ client }) => {
+    const pollMessage = await getPollMessage(client);
 
-    const response = await client.apps.datastore.query({
+    const winningReaction = pollMessage.reactions.reduce((
+      max: TODOAny,
+      reaction: TODOAny,
+    ) => max.count > reaction.count ? max : reaction);
+
+    const pollSuggestions = pollMessage.text.split(
+      TOPICS_TITLE,
+    )[1]
+      .split("\n").map((str: string) => str.trim()).filter(Boolean);
+
+    const winner = pollSuggestions.find((suggestion: string) =>
+      suggestion.startsWith(`:${winningReaction.name}:`)
+    );
+
+    const suggestionKey = winner.replace(`:${winningReaction.name}: `, "");
+
+    await client.apps.datastore.update({
       datastore: "suggestions",
-      expression: "#wasWinner = :value",
-      expression_attributes: { "#wasWinner": "wasWinner" },
-      expression_values: { ":value": 0 },
+      item: {
+        id: suggestionKey,
+        wasWinner: 1,
+      },
     });
 
-    const validSuggestions = response.items?.filter((item) => item.text);
-
-    console.log({ validSuggestions });
-
-    return;
+    return {
+      outputs: {
+        winner,
+      },
+    };
   },
 );

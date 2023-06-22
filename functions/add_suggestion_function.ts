@@ -1,5 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { SlackAPI } from "deno-slack-api/mod.ts";
+import { CHANNEL_ID } from "../consts.ts";
+import { TODOAny } from "../types.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -15,63 +16,105 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
   input_parameters: {
     properties: {
       suggestion: {
-        type: Schema.types.object,
+        type: Schema.types.string,
         description:
           "Whole Suggestion obj comming from event trigger stringified",
+      },
+      suggestor: {
+        type: Schema.slack.types.user_id,
       },
     },
     required: ["suggestion"],
   },
 });
-const isSuggestionUnique = async (client, text) => {
-  const response = await client.apps.datastore.query({
-    datastore: "suggestions",
-    expression: "#text = :value",
-    expression_attributes: { "#text": "text" },
-    expression_values: { ":text": text },
-  });
 
-  return !response.ok
-    ? false
-    : Boolean(response.items.filter((item) => item.text).length);
+const getEmoji = async (client: TODOAny): Promise<string> => {
+  const activeTopics = await client.apps.datastore.query({
+    datastore: "suggestions",
+    expression: "#wasWinner = :value",
+    expression_attributes: { "#wasWinner": "wasWinner" },
+    expression_values: { ":value": 0 },
+  });
+  const emojisInUse = activeTopics.items.map((activeTopic: TODOAny) =>
+    activeTopic.currentEmote
+  );
+  const allEmojis = await client.emoji.list({ include_categories: true });
+  const emojiList = allEmojis.categories.reduce(
+    (acc: string[], { emoji_names }: { emoji_names: string[] }) => {
+      return acc.concat(emoji_names);
+    },
+    [],
+  );
+
+  const emojiKeys = emojiList.map((emojiKey: string) => `:${emojiKey}:`);
+  const availableEmojis = emojiKeys.filter((emojiKey: string) =>
+    !emojisInUse.includes(emojiKey)
+  );
+
+  return availableEmojis[Math.floor(Math.random() * availableEmojis.length)];
 };
 
 export default SlackFunction(
   AddSuggestionFunctionDefinition,
+  // @ts-ignore
   async ({ inputs, client }) => {
-    const { suggestion } = inputs;
-    const [suggester, text] = suggestion.text.split(" added a topic:\n&gt; ");
-    const uuid = crypto.randomUUID();
-    // const isUnique = await isSuggestionUnique(client, text);
-    // console.log({ isUnique });
-    // if (!isUnique) {
-    //   await client.chat.postMessage({
-    //     channel: "C0516JP35SM",
-    //     text: `Suggestion "${text}" already exists.`,
-    //   });
-
-    //   return { outputs: {} };
-    // }
-
-    const response = await client.apps.datastore.put({
-      datastore: "suggestions",
-      item: {
-        id: uuid,
-        text,
-        suggester,
-        createdAt: new Date().toISOString(),
-        currentEmote: "",
-        currentVoteCount: 0,
-        wasWinner: 0,
-      },
+    const { suggestion, suggestor } = inputs;
+    const user = await client.users.profile.get({
+      user: suggestor,
     });
 
-    if (!response.ok) {
-      const error = `Failed to save a row in datastore: ${response.error}`;
-      return { error };
-    } else {
-      console.log(`A new row saved: ${JSON.stringify(response.item)}`);
-      return { outputs: {} };
+    try {
+      const uniqueCheck = await client.apps.datastore.get({
+        datastore: "suggestions",
+        id: suggestion,
+      });
+
+      if (uniqueCheck.item?.id) {
+        await client.chat.postMessage({
+          channel: CHANNEL_ID,
+          text: `Suggestion "${suggestion}" already exists.`,
+        });
+
+        return {
+          outputs: {},
+        };
+      }
+
+      const emoji = await getEmoji(client);
+
+      const response = await client.apps.datastore.put({
+        datastore: "suggestions",
+        item: {
+          id: suggestion,
+          text: suggestion,
+          suggester: suggestor,
+          createdAt: new Date().toISOString(),
+          currentEmote: emoji,
+          currentVoteCount: 0,
+          wasWinner: 0,
+        },
+      });
+
+      if (!response.ok) {
+        const error = `Failed to save a row in datastore: ${response.error}`;
+        return { error };
+      } else {
+        console.log(`A new row saved: ${JSON.stringify(response.item)}`);
+
+        await client.chat.postMessage({
+          channel: CHANNEL_ID,
+          text:
+            `${user.profile.display_name} has added a topic.\n> ${suggestion}`,
+        });
+
+        return { outputs: {} };
+      }
+    } catch (error) {
+      console.log({ error });
+      await client.chat.postMessage({
+        channel: CHANNEL_ID,
+        text: `Sorry, the topic suggestion failed :cry:. Please try again.`,
+      });
     }
   },
 );
