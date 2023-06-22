@@ -13,7 +13,7 @@ const topicsMessage = GrabTopicsWorkflow.addStep(
   GrabTopicsFunctionDefinition,
   {},
 );
-
+console.log({ topicsMessage });
 GrabTopicsWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: CHANNEL_ID,
   message: topicsMessage.outputs.message,

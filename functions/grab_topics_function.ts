@@ -17,15 +17,19 @@ export const GrabTopicsFunctionDefinition = DefineFunction({
       message: {
         type: Schema.types.string,
       },
+      channel_id: {
+        type: Schema.types.string,
+      },
     },
-    required: ["message"],
+    required: ["message", "channel_id"],
   },
 });
 
 export default SlackFunction(
   GrabTopicsFunctionDefinition,
   // @ts-ignore
-  async ({ client }) => {
+  async ({ client, env }) => {
+    console.log({ env }, env.CHANNEL_ID);
     const data = await client.apps.datastore.query({
       datastore: "suggestions",
       expression: "#wasWinner = :value",
@@ -51,6 +55,7 @@ export default SlackFunction(
       outputs: {
         message:
           `${TOPICS_TITLE}\nThere are no topics to left :tumbleweed:. Please suggest one!`,
+        channel_id: env.CHANNEL_ID,
       },
     };
   },

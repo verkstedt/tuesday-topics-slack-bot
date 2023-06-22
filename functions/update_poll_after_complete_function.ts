@@ -1,6 +1,6 @@
 import { SlackFunction } from "deno-slack-sdk/mod.ts";
 import { DefineFunction } from "deno-slack-sdk/mod.ts";
-import { CHANNEL_ID, TOPICS_TITLE } from "../consts.ts";
+import { TOPICS_TITLE } from "../consts.ts";
 import getPollMessage from "../utils/getPollMessage.ts";
 
 export const UpdatePollAfterCompleteFunctionDefinition = DefineFunction({
@@ -12,14 +12,14 @@ export const UpdatePollAfterCompleteFunctionDefinition = DefineFunction({
 
 export default SlackFunction(
   UpdatePollAfterCompleteFunctionDefinition,
-  async ({ client }) => {
-    const pollMessage = await getPollMessage(client);
+  async ({ client, env }) => {
+    const pollMessage = await getPollMessage(client, env.CHANNEL_ID);
     const updatedText = pollMessage.text.replace(
       TOPICS_TITLE,
       `*Poll complete*`,
     );
     await client.chat.update({
-      channel: CHANNEL_ID,
+      channel: env.CHANNEL_ID,
       ts: pollMessage.ts,
       as_user: true,
       blocks: [{

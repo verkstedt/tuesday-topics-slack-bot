@@ -1,7 +1,6 @@
 import { SlackFunction } from "deno-slack-sdk/mod.ts";
 import { Schema } from "deno-slack-sdk/mod.ts";
 import { DefineFunction } from "deno-slack-sdk/mod.ts";
-import { CHANNEL_ID } from "../consts.ts";
 import getPollMessage from "../utils/getPollMessage.ts";
 
 export const UpdatePollFunctionDefinition = DefineFunction({
@@ -22,12 +21,12 @@ export const UpdatePollFunctionDefinition = DefineFunction({
 
 export default SlackFunction(
   UpdatePollFunctionDefinition,
-  async ({ inputs, client }) => {
+  async ({ inputs, client, env }) => {
     const { message } = inputs;
-    const pollMessage = await getPollMessage(client);
+    const pollMessage = await getPollMessage(client, env.CHANNEL_ID);
 
-    const update = await client.chat.update({
-      channel: CHANNEL_ID,
+    await client.chat.update({
+      channel: env.CHANNEL_ID,
       ts: pollMessage.ts,
       as_user: true,
       blocks: [{

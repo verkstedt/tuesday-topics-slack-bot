@@ -1,6 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { OpenAI } from "https://deno.land/x/openai/mod.ts";
-import { CHANNEL_ID } from "../consts.ts";
 import { TODOAny } from "../types.ts";
 
 /**
@@ -29,7 +28,10 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
   },
 });
 
-const getEmoji = async (client: TODOAny): Promise<string> => {
+const getEmoji = async (
+  client: TODOAny,
+  idealEmojis: string[],
+): Promise<string> => {
   const activeTopics = await client.apps.datastore.query({
     datastore: "suggestions",
     expression: "#wasWinner = :value",
@@ -52,6 +54,16 @@ const getEmoji = async (client: TODOAny): Promise<string> => {
     !emojisInUse.includes(emojiKey)
   );
 
+  if (idealEmojis.length) {
+    const bestEmoji = idealEmojis.find((idealEmoji) =>
+      availableEmojis.includes[idealEmoji]
+    );
+
+    if (bestEmoji) {
+      return bestEmoji;
+    }
+  }
+
   return availableEmojis[Math.floor(Math.random() * availableEmojis.length)];
 };
 
@@ -72,7 +84,7 @@ export default SlackFunction(
 
       if (uniqueCheck.item?.id) {
         await client.chat.postMessage({
-          channel: CHANNEL_ID,
+          channel: env.CHANNEL_ID,
           text: `Suggestion "${suggestion}" already exists.`,
         });
 
@@ -81,15 +93,22 @@ export default SlackFunction(
         };
       }
       const openAI = new OpenAI(env["OPEN_API_KEY"]);
-      const completion = await openAI.createCompletion({
-        model: "text-davinci-003",
-        prompt:
-          `Choose up to 5 emojis that fit the topic "${suggestion}", and give them in the Slack format`,
+      const completion = await openAI.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content:
+              `Choose up to 5 emojis that fit the topic "${suggestion}", and only give them as only Slack emoji aliases`,
+          },
+        ],
       });
-      const result = completion.choices[0].text;
-      const extractedEmojis = result.matchAll(/(:[a-z_]+:)/g);
-      console.dir({ result: completion.choices, extractedEmojis });
-      const emoji = await getEmoji(client);
+      const result = completion.choices[0]?.message.content;
+      const idealEmojis = [...result.matchAll(/:([a-z_]+):/g)].map(([value]) =>
+        value
+      );
+
+      const emoji = await getEmoji(client, idealEmojis);
 
       const response = await client.apps.datastore.put({
         datastore: "suggestions",
@@ -111,7 +130,7 @@ export default SlackFunction(
         console.log(`A new row saved: ${JSON.stringify(response.item)}`);
 
         await client.chat.postMessage({
-          channel: CHANNEL_ID,
+          channel: env.CHANNEL_ID,
           text:
             `${user.profile.display_name} has added a topic.\n> ${suggestion}`,
         });
@@ -121,7 +140,7 @@ export default SlackFunction(
     } catch (error) {
       console.log({ error });
       await client.chat.postMessage({
-        channel: CHANNEL_ID,
+        channel: env.CHANNEL_ID,
         text: `Sorry, the topic suggestion failed :cry:. Please try again.`,
       });
     }

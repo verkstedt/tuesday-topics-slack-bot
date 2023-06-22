@@ -20,16 +20,20 @@ export const FindWinnerFunctionDefinition = DefineFunction({
         type: Schema.types.string,
         description: "The winning result",
       },
+      channel_id: {
+        type: Schema.types.string,
+        description: "The channel ID to post to",
+      },
     },
-    required: ["winner"],
+    required: ["winner", "channel_id"],
   },
 });
 
 export default SlackFunction(
   FindWinnerFunctionDefinition,
   // @ts-ignore
-  async ({ client }) => {
-    const pollMessage = await getPollMessage(client);
+  async ({ client, env }) => {
+    const pollMessage = await getPollMessage(client, env.CHANNEL_ID);
 
     const winningReaction = pollMessage.reactions.reduce((
       max: TODOAny,
@@ -58,6 +62,7 @@ export default SlackFunction(
     return {
       outputs: {
         winner,
+        channel_id: env.CHANNEL_ID,
       },
     };
   },
