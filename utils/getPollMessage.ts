@@ -1,9 +1,9 @@
-import { CHANNEL_ID, TOPICS_TITLE } from "../consts.ts";
+import { TOPICS_TITLE } from "../consts.ts";
 import { TODOAny } from "../types.ts";
 
 const getPollMessage = async (client: TODOAny) => {
   const history = await client.conversations.history({
-    channel: CHANNEL_ID,
+    channel: Deno.env.get("CHANNEL_ID"),
   });
 
   const pollMessage = history.messages?.filter((message: TODOAny) => {
