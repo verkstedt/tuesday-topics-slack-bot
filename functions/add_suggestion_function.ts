@@ -1,5 +1,4 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { CHANNEL_ID } from "../consts.ts";
 import { TODOAny } from "../types.ts";
 
 /**
@@ -57,7 +56,7 @@ const getEmoji = async (client: TODOAny): Promise<string> => {
 export default SlackFunction(
   AddSuggestionFunctionDefinition,
   // @ts-ignore
-  async ({ inputs, client }) => {
+  async ({ inputs, client, env }) => {
     const { suggestion, suggestor } = inputs;
     const user = await client.users.profile.get({
       user: suggestor,
@@ -71,7 +70,7 @@ export default SlackFunction(
 
       if (uniqueCheck.item?.id) {
         await client.chat.postMessage({
-          channel: CHANNEL_ID,
+          channel: env.CHANNEL_ID,
           text: `Suggestion "${suggestion}" already exists.`,
         });
 
@@ -102,7 +101,7 @@ export default SlackFunction(
         console.log(`A new row saved: ${JSON.stringify(response.item)}`);
 
         await client.chat.postMessage({
-          channel: CHANNEL_ID,
+          channel: env.CHANNEL_ID,
           text:
             `${user.profile.display_name} has added a topic.\n> ${suggestion}`,
         });
@@ -112,7 +111,7 @@ export default SlackFunction(
     } catch (error) {
       console.log({ error });
       await client.chat.postMessage({
-        channel: CHANNEL_ID,
+        channel: env.CHANNEL_ID,
         text: `Sorry, the topic suggestion failed :cry:. Please try again.`,
       });
     }
