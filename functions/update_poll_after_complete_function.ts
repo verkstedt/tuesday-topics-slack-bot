@@ -16,7 +16,7 @@ export default SlackFunction(
     const pollMessage = await getPollMessage(client);
     const updatedText = pollMessage.text.replace(
       TOPICS_TITLE,
-      `*Poll complete*`,
+      `*Poll closed*`,
     );
     await client.chat.update({
       channel: CHANNEL_ID,
