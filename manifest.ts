@@ -36,5 +36,6 @@ export default Manifest({
     "datastore:write",
     "emoji:read",
     "users.profile:read",
+    "reactions:write",
   ],
 });

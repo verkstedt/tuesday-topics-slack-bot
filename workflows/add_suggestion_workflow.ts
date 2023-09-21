@@ -19,8 +19,19 @@ const AddSuggestionWorkflow = DefineWorkflow({
       suggestor: {
         type: Schema.slack.types.user_id,
       },
+      emoji: {
+        type: Schema.types.string,
+      },
     },
     required: ["interactivity"],
+  },
+  output_parameters: {
+    required: [],
+    properties: {
+      emoji: {
+        type: Schema.types.string,
+      },
+    },
   },
 });
 
@@ -57,6 +68,7 @@ const poll = AddSuggestionWorkflow.addStep(
 
 AddSuggestionWorkflow.addStep(UpdatePollFunctionDefinition, {
   message: poll.outputs.message,
+  emoji: poll.outputs.emoji,
 });
 
 export default AddSuggestionWorkflow;

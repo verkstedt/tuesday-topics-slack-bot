@@ -17,6 +17,15 @@ export const GrabTopicsFunctionDefinition = DefineFunction({
       message: {
         type: Schema.types.string,
       },
+      activeEmojis: {
+        type: Schema.types.array,
+        items: {
+          type: Schema.types.string,
+        },
+      },
+      emoji: {
+        type: Schema.types.string,
+      },
     },
     required: ["message"],
   },
@@ -33,24 +42,24 @@ export default SlackFunction(
       expression_values: { ":value": 0 },
     });
 
-    const suggestions = data?.items?.filter(({ currentEmote }) =>
+    const suggestionsWithEmojis = data?.items?.filter(({ currentEmote }) =>
       Boolean(currentEmote)
-    ).map((
+    );
+
+    const activeEmojis = suggestionsWithEmojis.map(({ currentEmote }) =>
+      currentEmote
+    );
+
+    const suggestions = suggestionsWithEmojis.map((
       { text, currentEmote },
     ) => `${currentEmote} ${text.trim()}`).join("\n");
 
-    if (suggestions.length) {
-      return {
-        outputs: {
-          message: `${TOPICS_TITLE}\n${suggestions}`,
-        },
-      };
-    }
-
     return {
       outputs: {
-        message:
-          `${TOPICS_TITLE}\nThere are no topics to left :tumbleweed:. Please suggest one!`,
+        message: suggestions.length
+          ? `${TOPICS_TITLE}\n${suggestions}`
+          : `${TOPICS_TITLE}\nThere are no topics to left :tumbleweed:. Please suggest one!`,
+        activeEmojis,
       },
     };
   },

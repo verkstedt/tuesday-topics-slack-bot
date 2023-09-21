@@ -1,6 +1,7 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import { CHANNEL_ID } from "../consts.ts";
 import { TODOAny } from "../types.ts";
+import getAvailableEmojis from "../utils/getAvailableEmojis.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -38,13 +39,7 @@ const getEmoji = async (client: TODOAny): Promise<string> => {
   const emojisInUse = activeTopics.items.map((activeTopic: TODOAny) =>
     activeTopic.currentEmote
   );
-  const allEmojis = await client.emoji.list({ include_categories: true });
-  const emojiList = allEmojis.categories.reduce(
-    (acc: string[], { emoji_names }: { emoji_names: string[] }) => {
-      return acc.concat(emoji_names);
-    },
-    [],
-  );
+  const emojiList = await getAvailableEmojis(client);
 
   const emojiKeys = emojiList.map((emojiKey: string) => `:${emojiKey}:`);
   const availableEmojis = emojiKeys.filter((emojiKey: string) =>
@@ -107,7 +102,11 @@ export default SlackFunction(
             `${user.profile.display_name} has added a topic.\n> ${suggestion}`,
         });
 
-        return { outputs: {} };
+        return {
+          outputs: {
+            emoji,
+          },
+        };
       }
     } catch (error) {
       console.log({ error });

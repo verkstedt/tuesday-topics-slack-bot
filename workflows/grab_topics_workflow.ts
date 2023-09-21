@@ -1,3 +1,4 @@
+import { ApplyInitialEmojisFunctionDefinition } from "../functions/apply_initial_emojis_function.ts";
 import { Schema } from "deno-slack-sdk/mod.ts";
 import { DefineWorkflow } from "deno-slack-sdk/mod.ts";
 import { CHANNEL_ID } from "../consts.ts";
@@ -14,9 +15,17 @@ const topicsMessage = GrabTopicsWorkflow.addStep(
   {},
 );
 
-GrabTopicsWorkflow.addStep(Schema.slack.functions.SendMessage, {
+const message = GrabTopicsWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: CHANNEL_ID,
   message: topicsMessage.outputs.message,
 });
+
+GrabTopicsWorkflow.addStep(
+  ApplyInitialEmojisFunctionDefinition,
+  {
+    timestamp: message.outputs.message_context.message_ts,
+    activeEmojis: topicsMessage.outputs.activeEmojis,
+  },
+);
 
 export default GrabTopicsWorkflow;

@@ -46,7 +46,6 @@ export default SlackFunction(
     );
 
     const suggestionKey = winner.replace(`:${winningReaction.name}: `, "");
-
     await client.apps.datastore.update({
       datastore: "suggestions",
       item: {

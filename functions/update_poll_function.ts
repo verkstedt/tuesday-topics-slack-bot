@@ -15,6 +15,10 @@ export const UpdatePollFunctionDefinition = DefineFunction({
         type: Schema.types.string,
         description: "The fully formed message",
       },
+      emoji: {
+        type: Schema.types.string,
+        description: "The emoji assigned to the suggestion",
+      },
     },
     required: ["message"],
   },
@@ -23,10 +27,10 @@ export const UpdatePollFunctionDefinition = DefineFunction({
 export default SlackFunction(
   UpdatePollFunctionDefinition,
   async ({ inputs, client }) => {
-    const { message } = inputs;
+    const { message, emoji } = inputs;
     const pollMessage = await getPollMessage(client);
 
-    const update = await client.chat.update({
+    const msg = await client.chat.update({
       channel: CHANNEL_ID,
       ts: pollMessage.ts,
       as_user: true,
@@ -38,6 +42,12 @@ export default SlackFunction(
           verbatim: true,
         },
       }],
+    });
+
+    await client.reactions.add({
+      name: emoji,
+      timestamp: msg.ts,
+      channel: CHANNEL_ID,
     });
 
     return {
