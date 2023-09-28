@@ -1,16 +1,15 @@
-import { CHANNEL_ID, TOPICS_TITLE } from "../consts.ts";
-import { TODOAny } from "../types.ts";
+import { SlackAPIClient } from "https://deno.land/x/deno_slack_api@2.1.1/types.ts";
+import { CHANNEL_ID } from "../consts.ts";
 
-const getPollMessage = async (client: TODOAny) => {
-  const history = await client.conversations.history({
+const getPollMessage = async (client: SlackAPIClient, ts: string | number) => {
+  const result = await client.conversations.history({
     channel: CHANNEL_ID,
+    latest: ts,
+    inclusive: true,
+    limit: 1,
   });
 
-  const pollMessage = history.messages?.filter((message: TODOAny) => {
-    return message?.text.includes(TOPICS_TITLE);
-  })[0];
-
-  return pollMessage;
+  return result.messages[0];
 };
 
 export default getPollMessage;

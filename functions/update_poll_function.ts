@@ -2,6 +2,7 @@ import { SlackFunction } from "deno-slack-sdk/mod.ts";
 import { Schema } from "deno-slack-sdk/mod.ts";
 import { DefineFunction } from "deno-slack-sdk/mod.ts";
 import { CHANNEL_ID } from "../consts.ts";
+import getCurrentPollMessage from "../utils/getCurrentPollMessage.ts";
 import getPollMessage from "../utils/getPollMessage.ts";
 
 export const UpdatePollFunctionDefinition = DefineFunction({
@@ -28,11 +29,11 @@ export default SlackFunction(
   UpdatePollFunctionDefinition,
   async ({ inputs, client }) => {
     const { message, emoji } = inputs;
-    const pollMessage = await getPollMessage(client);
+    const pollMessageTs = await getCurrentPollMessage(client);
 
-    const msg = await client.chat.update({
+    await client.chat.update({
       channel: CHANNEL_ID,
-      ts: pollMessage.ts,
+      ts: pollMessageTs,
       as_user: true,
       blocks: [{
         type: "section",
@@ -44,11 +45,15 @@ export default SlackFunction(
       }],
     });
 
-    await client.reactions.add({
-      name: emoji,
-      timestamp: msg.ts,
-      channel: CHANNEL_ID,
-    });
+    const name = emoji && emoji.slice(1, -1);
+
+    if (name) {
+      await client.reactions.add({
+        name: emoji.slice(1, -1),
+        timestamp: pollMessageTs,
+        channel: CHANNEL_ID,
+      });
+    }
 
     return {
       outputs: {},

@@ -53,7 +53,7 @@ const form = AddSuggestionWorkflow.addStep(
   },
 );
 
-AddSuggestionWorkflow.addStep(
+const suggestion = AddSuggestionWorkflow.addStep(
   AddSuggestionFunctionDefinition,
   {
     suggestion: form.outputs.fields.suggestion,
@@ -68,7 +68,7 @@ const poll = AddSuggestionWorkflow.addStep(
 
 AddSuggestionWorkflow.addStep(UpdatePollFunctionDefinition, {
   message: poll.outputs.message,
-  emoji: poll.outputs.emoji,
+  emoji: suggestion.outputs.emoji,
 });
 
 export default AddSuggestionWorkflow;

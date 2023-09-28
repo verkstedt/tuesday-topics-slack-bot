@@ -27,6 +27,14 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
     },
     required: ["suggestion"],
   },
+  output_parameters: {
+    properties: {
+      emoji: {
+        type: Schema.types.string,
+      },
+    },
+    required: ["emoji"],
+  },
 });
 
 const getEmoji = async (client: TODOAny): Promise<string> => {
