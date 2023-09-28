@@ -2,6 +2,7 @@ import { TOPICS_TITLE } from "../consts.ts";
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import getPollMessage from "../utils/getPollMessage.ts";
 import { TODOAny } from "../types.ts";
+import getCurrentPollMessage from "../utils/getCurrentPollMessage.ts";
 
 /**
  * Functions are reusable building blocks of automation that accept
@@ -29,7 +30,8 @@ export default SlackFunction(
   FindWinnerFunctionDefinition,
   // @ts-ignore
   async ({ client }) => {
-    const pollMessage = await getPollMessage(client);
+    const pollMessageId = await getCurrentPollMessage(client);
+    const pollMessage = await getPollMessage(client, pollMessageId);
 
     const winningReaction = pollMessage.reactions.reduce((
       max: TODOAny,

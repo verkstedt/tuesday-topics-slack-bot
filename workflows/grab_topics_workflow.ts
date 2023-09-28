@@ -1,3 +1,4 @@
+import { StorePollMessageFunctionDefinition } from "../functions/store_poll_message.ts";
 import { ApplyInitialEmojisFunctionDefinition } from "../functions/apply_initial_emojis_function.ts";
 import { Schema } from "deno-slack-sdk/mod.ts";
 import { DefineWorkflow } from "deno-slack-sdk/mod.ts";
@@ -25,6 +26,13 @@ GrabTopicsWorkflow.addStep(
   {
     timestamp: message.outputs.message_context.message_ts,
     activeEmojis: topicsMessage.outputs.activeEmojis,
+  },
+);
+
+GrabTopicsWorkflow.addStep(
+  StorePollMessageFunctionDefinition,
+  {
+    timestamp: message.outputs.message_context.message_ts,
   },
 );
 
