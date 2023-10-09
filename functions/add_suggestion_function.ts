@@ -33,7 +33,7 @@ export const AddSuggestionFunctionDefinition = DefineFunction({
         type: Schema.types.string,
       },
     },
-    required: ["emoji"],
+    required: [],
   },
 });
 

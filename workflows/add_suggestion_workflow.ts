@@ -61,14 +61,16 @@ const suggestion = AddSuggestionWorkflow.addStep(
   },
 );
 
-const poll = AddSuggestionWorkflow.addStep(
-  GrabTopicsFunctionDefinition,
-  {},
-);
+if (suggestion.outputs?.emoji) {
+  const poll = AddSuggestionWorkflow.addStep(
+    GrabTopicsFunctionDefinition,
+    {},
+  );
 
-AddSuggestionWorkflow.addStep(UpdatePollFunctionDefinition, {
-  message: poll.outputs.message,
-  emoji: suggestion.outputs.emoji,
-});
+  AddSuggestionWorkflow.addStep(UpdatePollFunctionDefinition, {
+    message: poll.outputs.message,
+    emoji: suggestion.outputs.emoji,
+  });
+}
 
 export default AddSuggestionWorkflow;
