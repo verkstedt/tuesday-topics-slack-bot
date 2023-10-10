@@ -17,14 +17,16 @@ const topicsMessage = GrabTopicsWorkflow.addStep(
   {},
 );
 
+if (topicsMessage.outputs.success) {
+  GrabTopicsWorkflow.addStep(UpdatePollAfterCompleteFunctionDefinition, {});
+}
+
 const message = GrabTopicsWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: CHANNEL_ID,
   message: topicsMessage.outputs.message,
 });
 
 if (topicsMessage.outputs.success) {
-  GrabTopicsWorkflow.addStep(UpdatePollAfterCompleteFunctionDefinition, {});
-
   GrabTopicsWorkflow.addStep(
     ApplyInitialEmojisFunctionDefinition,
     {
