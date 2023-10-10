@@ -34,13 +34,13 @@ if (topicsMessage.outputs.success) {
       activeEmojis: topicsMessage.outputs.activeEmojis,
     },
   );
-
-  GrabTopicsWorkflow.addStep(
-    StorePollMessageFunctionDefinition,
-    {
-      timestamp: message.outputs.message_context.message_ts,
-    },
-  );
 }
+
+GrabTopicsWorkflow.addStep(
+  StorePollMessageFunctionDefinition,
+  {
+    timestamp: message.outputs.message_context.message_ts,
+  },
+);
 
 export default GrabTopicsWorkflow;
