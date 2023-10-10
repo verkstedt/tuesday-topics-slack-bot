@@ -26,6 +26,9 @@ export const GrabTopicsFunctionDefinition = DefineFunction({
       emoji: {
         type: Schema.types.string,
       },
+      success: {
+        type: Schema.types.boolean,
+      },
     },
     required: ["message"],
   },
@@ -54,12 +57,15 @@ export default SlackFunction(
       { text, currentEmote },
     ) => `${currentEmote} ${text.trim()}`).join("\n");
 
+    const topicsExist = Boolean(suggestions.length);
+
     return {
       outputs: {
-        message: suggestions.length
+        message: topicsExist
           ? `${TOPICS_TITLE}\n${suggestions}`
           : `${TOPICS_TITLE}\nThere are no topics to left :tumbleweed:. Please suggest one!`,
         activeEmojis,
+        success: topicsExist,
       },
     };
   },

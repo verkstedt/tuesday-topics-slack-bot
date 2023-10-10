@@ -10,9 +10,8 @@ import { PollmessageDatastore } from "./datastores/pollmessage.ts";
  * https://api.slack.com/future/manifest
  */
 export default Manifest({
-  name: "tuesday-topics-poll-bot",
-  description:
-    "A sample that demonstrates using a function, workflow and trigger to send a greeting",
+  name: "Tuesday Topics Poll Bot",
+  description: "A bot that lets the team vote for Tuesday Topics",
   icon: "assets/default_new_app_icon.png",
   workflows: [
     AddSuggestionWorkflow,

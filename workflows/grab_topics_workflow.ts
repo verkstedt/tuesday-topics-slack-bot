@@ -4,6 +4,7 @@ import { Schema } from "deno-slack-sdk/mod.ts";
 import { DefineWorkflow } from "deno-slack-sdk/mod.ts";
 import { CHANNEL_ID } from "../consts.ts";
 import { GrabTopicsFunctionDefinition } from "../functions/grab_topics_function.ts";
+import { UpdatePollAfterCompleteFunctionDefinition } from "../functions/update_poll_after_complete_function.ts";
 
 const GrabTopicsWorkflow = DefineWorkflow({
   callback_id: "grab_topics_workflow",
@@ -21,19 +22,23 @@ const message = GrabTopicsWorkflow.addStep(Schema.slack.functions.SendMessage, {
   message: topicsMessage.outputs.message,
 });
 
-GrabTopicsWorkflow.addStep(
-  ApplyInitialEmojisFunctionDefinition,
-  {
-    timestamp: message.outputs.message_context.message_ts,
-    activeEmojis: topicsMessage.outputs.activeEmojis,
-  },
-);
+if (topicsMessage.outputs.success) {
+  GrabTopicsWorkflow.addStep(UpdatePollAfterCompleteFunctionDefinition, {});
 
-GrabTopicsWorkflow.addStep(
-  StorePollMessageFunctionDefinition,
-  {
-    timestamp: message.outputs.message_context.message_ts,
-  },
-);
+  GrabTopicsWorkflow.addStep(
+    ApplyInitialEmojisFunctionDefinition,
+    {
+      timestamp: message.outputs.message_context.message_ts,
+      activeEmojis: topicsMessage.outputs.activeEmojis,
+    },
+  );
+
+  GrabTopicsWorkflow.addStep(
+    StorePollMessageFunctionDefinition,
+    {
+      timestamp: message.outputs.message_context.message_ts,
+    },
+  );
+}
 
 export default GrabTopicsWorkflow;
