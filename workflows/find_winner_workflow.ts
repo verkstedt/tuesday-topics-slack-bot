@@ -26,7 +26,7 @@ const findWinner = FindWinnerWorkflow.addStep(
 FindWinnerWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: CHANNEL_ID,
   message:
-    `And the winner is... :drum_with_drumsticks:\n${findWinner.outputs.winner}`,
+    `<!here> And the winner is... :drum_with_drumsticks:\n${findWinner.outputs.winner}`,
 });
 
 FindWinnerWorkflow.addStep(UpdatePollAfterCompleteFunctionDefinition, {});

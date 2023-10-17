@@ -62,7 +62,7 @@ export default SlackFunction(
     return {
       outputs: {
         message: topicsExist
-          ? `${TOPICS_TITLE}\n${suggestions}`
+          ? `${TOPICS_TITLE}\n<!here>\n${suggestions}`
           : `${TOPICS_TITLE}\nThere are no topics to left :tumbleweed:. Please suggest one!`,
         activeEmojis,
         success: topicsExist,
