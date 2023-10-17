@@ -6,11 +6,11 @@ const grabTopicsSelectionTrigger: Trigger = {
   type: TriggerTypes.Scheduled,
   workflow: "#/workflows/grab_topics_workflow",
   schedule: {
-    start_time: "2023-10-18T07:00:00Z",
+    start_time: "2023-10-17T10:00:00Z",
     timezone: "UTC",
     frequency: {
       type: "weekly",
-      on_days: ["Wednesday"],
+      on_days: ["Tuesday"],
       repeats_every: 1,
     },
   },
