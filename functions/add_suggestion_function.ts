@@ -62,9 +62,6 @@ export default SlackFunction(
   // @ts-ignore
   async ({ inputs, client }) => {
     const { suggestion, suggestor } = inputs;
-    const user = await client.users.profile.get({
-      user: suggestor,
-    });
 
     try {
       const uniqueCheck = await client.apps.datastore.get({
@@ -106,8 +103,7 @@ export default SlackFunction(
 
         await client.chat.postMessage({
           channel: CHANNEL_ID,
-          text:
-            `${user.profile.display_name} has added a topic.\n> ${suggestion}`,
+          text: `A new topic has been added!\n> ${suggestion}`,
         });
 
         return {
