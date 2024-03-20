@@ -45,6 +45,39 @@ export default SlackFunction(
         timestamp,
       });
 
+      const bookmarkTitle = "Tuesday Topics Poll";
+      // Update bookmark
+      const bookmarkReponse = await client.bookmarks.list({
+        channel: CHANNEL_ID,
+      });
+
+      if (bookmarkReponse.ok) {
+        const bookmark = bookmarkReponse.bookmarks.find((bm: any) => {
+          return bm.title === bookmarkTitle;
+        });
+
+        const { permalink } = await client.chat.getPermalink({
+          channel: CHANNEL_ID,
+          message_ts: timestamp,
+        });
+
+        if (bookmark) {
+          await client.bookmarks.edit({
+            channel_id: CHANNEL_ID,
+            bookmark_id: bookmark.id,
+            link: permalink,
+          });
+        } else {
+          await client.bookmarks.add({
+            channel_id: CHANNEL_ID,
+            title: bookmarkTitle,
+            type: "link",
+            emoji: ":ballot_box_with_ballot:",
+            link: permalink,
+          });
+        }
+      }
+
       const emojiList = await getAvailableEmojis(client);
       await Promise.all(activeEmojis.map(async (emojiName: string) => {
         const name = emojiName.slice(1, -1);

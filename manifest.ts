@@ -39,5 +39,7 @@ export default Manifest({
     "reactions:write",
     "pins:write",
     "pins:read",
+    "bookmarks:write",
+    "bookmarks:read",
   ],
 });
