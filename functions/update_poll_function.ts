@@ -35,14 +35,7 @@ export default SlackFunction(
       channel: CHANNEL_ID,
       ts: pollMessageTs,
       as_user: true,
-      blocks: [{
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: message,
-          verbatim: true,
-        },
-      }],
+      text: message,
     });
 
     const name = emoji && emoji.slice(1, -1);

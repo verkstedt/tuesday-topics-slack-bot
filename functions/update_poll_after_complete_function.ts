@@ -24,14 +24,12 @@ export default SlackFunction(
       channel: CHANNEL_ID,
       ts: pollMessage.ts,
       as_user: true,
-      blocks: [{
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: updatedText,
-          verbatim: true,
-        },
-      }],
+      text: updatedText,
+    });
+
+    await client.pins.remove({
+      channel: CHANNEL_ID,
+      ts: pollMessage.ts,
     });
 
     await client.apps.datastore.update({
