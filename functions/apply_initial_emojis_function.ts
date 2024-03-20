@@ -39,6 +39,12 @@ export default SlackFunction(
     try {
       const { timestamp, activeEmojis } = inputs;
 
+      // TODO move to own function
+      await client.pins.add({
+        channel: CHANNEL_ID,
+        timestamp,
+      });
+
       const emojiList = await getAvailableEmojis(client);
       await Promise.all(activeEmojis.map(async (emojiName: string) => {
         const name = emojiName.slice(1, -1);

@@ -37,5 +37,7 @@ export default Manifest({
     "emoji:read",
     "users.profile:read",
     "reactions:write",
+    "pins:write",
+    "pins:read",
   ],
 });

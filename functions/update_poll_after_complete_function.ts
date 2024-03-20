@@ -29,7 +29,7 @@ export default SlackFunction(
 
     await client.pins.remove({
       channel: CHANNEL_ID,
-      ts: pollMessage.ts,
+      timestamp: pollMessage.ts,
     });
 
     await client.apps.datastore.update({
