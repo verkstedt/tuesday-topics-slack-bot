@@ -4,6 +4,7 @@ import FindWinnerWorkflow from "./workflows/find_winner_workflow.ts";
 import { SuggestionsDatastore } from "./datastores/suggestions.ts";
 import AddSuggestionWorkflow from "./workflows/add_suggestion_workflow.ts";
 import { PollmessageDatastore } from "./datastores/pollmessage.ts";
+import ReminderWorkflow from "./workflows/reminder_workflow.ts";
 /**
  * The app manifest contains the app's configuration. This
  * file defines attributes like app name and description.
@@ -17,6 +18,7 @@ export default Manifest({
     AddSuggestionWorkflow,
     GrabTopicsWorkflow,
     FindWinnerWorkflow,
+    ReminderWorkflow,
   ],
   outgoingDomains: [],
   datastores: [SuggestionsDatastore, PollmessageDatastore], // Add the database to this list
