@@ -1,3 +1,5 @@
+Created during Open Friday at [verkstedt](https://verkstedt.com/)
+
 # Deno Hello World Slack App
 
 This sample app demonstrates how to use a function, workflow, and trigger to
